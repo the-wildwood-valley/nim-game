@@ -71,8 +71,10 @@ class Game:
         self.referee = referee
 
     def run(self):
-        self.referee.run()
+        self.referee.introduce()
+        self.referee.init_game()
 
+        self.referee.decalre_guessing_start()
         while True:
             self.player_left.run()
             self.referee.run()
@@ -82,7 +84,9 @@ class Game:
             self.referee.run()
             if self.referee.is_guessing_over:
                 break
+        self.referee.decalre_guessing_result()
 
+        self.referee.decalre_game_start()
         if self.referee.guess_first_result == constants.GuessFirstResult.LEFT:
             self.player_left.guess_first = True
             self.player_right.guess_first = False
@@ -103,6 +107,7 @@ class Game:
             self.referee.run()
             if self.referee.is_game_over:
                 break
+        self.referee.decalre_game_start()
 
         if self.referee.game_result == constants.GameResult.LEFT:
             self.player_left.win = True
@@ -116,3 +121,4 @@ class Game:
 
         self.player_left.run()
         self.player_right.run()
+        self.referee.decalre_game_start()

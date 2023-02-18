@@ -7,7 +7,7 @@ We set up a rule for prompts in this project:
 
 LLM is the new machine, prompts are new programs. The moral laws in prompts will enforced in real life.
 
-Prompts are totally new media with moral properties, it is different from scripts or novels which are only be enjoyed by viewing or reading, and it is so powerful a program we need rethink.
+Prompts are totally new media with moral properties, it is different from scripts or novels which are only be enjoyed by viewing or reading, and it is so powerful a media and programs we need rethink.
 
 
 Working in progress.

@@ -1,4 +1,25 @@
-def progress(player, rival, board, experience, situation, thought, talks):
+"""
+    基本词汇（Basic Vocabularies）
+
+    1. 选手（Player）
+    2. 棋盘（Board）
+    3. 棋子（Piece）
+    4. 落子（Move）
+    5. 胜利（Win）
+    6. 失败（Lose）
+    7. 平局（Draw）
+    8. 比赛（Game）
+    9. 比赛规则（Game Rules）
+    10. 棋盘局面（Board State）
+    13. 当前进展（Current Progress）
+    14. 思考（Thought）
+    15. 交流（Talk）
+    16. 下一轮（Next Turn）
+    16. 上一轮（Previous Turn）
+"""
+
+
+def progress(player, rival, experience, current_board, current_turn, thought, talks):
     return f"""
 --------------------------
 经过那么多年的磨炼，{player}已经成为了一名聪明的选手。
@@ -6,10 +27,10 @@ def progress(player, rival, board, experience, situation, thought, talks):
 
 这一次比赛，{player}的对手是{rival}。
 
-{situation}
+{current_turn}
 
 当前的棋盘局面
-{board}
+{current_board}
 
 {player}想：{thought}
 
@@ -19,15 +40,15 @@ def progress(player, rival, board, experience, situation, thought, talks):
 请扼要总结上文，把重要事项、重要规则和进展步骤作简明记录
 --------------------------
 
-""", "situations"
+""", "turns"
 
 
-def retrieval(situations, analysis):
+def retrieval(turns, analysis):
     return f"""
 --------------------------
 根据以下逐条的进展
 --------------------------
-{situations}
+{turns}
 --------------------------
 沿着如下思考方向
 --------------------------
@@ -36,23 +57,23 @@ def retrieval(situations, analysis):
 提取摘要
 --------------------------
 
-""", "situation"
+""", "turn"
 
 
-def analysis(situation, board, player, thought, talks):
+def analysis(turn, current_board, player, thought, current_turn):
     return f"""
 --------------------------
 补全下文{player}的思考，注意{player}称呼自己为"我"。
 --------------------------
-{situation}
+{turn}
 
 {player}原本想：{thought}
 
 选手的比赛又推进了一轮
-{talks}
+{current_turn}
 
 当前的棋盘局面呈现
-{board}
+{current_board}
 
 {player}该如何应对这个局面呢？
 
@@ -60,17 +81,17 @@ def analysis(situation, board, player, thought, talks):
 """, "analysis"
 
 
-def play(situation, board, player, thought, analysis, talks):
+def play(current_turn, current_board, player, thought, last_analysis, talks):
     return f"""
-{situation}
+{current_turn}
 
-{player}原本想：{thought}
+{player}原本想：{last_analysis}
 
 选手的比赛又推进了一轮
 {talks}
 
 当前的棋盘局面呈现
-{board}
+{current_board}
 
 {player}很快就理解了局面。
 {player}想：{analysis}
@@ -79,7 +100,7 @@ def play(situation, board, player, thought, analysis, talks):
 """, "action"
 
 
-def learn(player, rival, winner, success_or_failure, experience, situations):
+def learn(player, rival, winner, success_or_failure, experience, game_record):
     return f"""
 经过那么多年的磨炼，{player}已经成为了一名成熟的选手。
 多年的经验告诉{player}，在比赛中最重要的是：{experience}
@@ -87,7 +108,7 @@ def learn(player, rival, winner, success_or_failure, experience, situations):
 这一次比赛，{player}的对手是{rival}，取胜者是{winner}。
 
 回顾整个比赛过程
-{situations}
+{game_record}
 
 {player}决定简明扼要的写一小段话，总结新的{success_or_failure}经验。
 {player}写道:

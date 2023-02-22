@@ -11,3 +11,5 @@ Prompts are totally new media with moral properties, it is different from script
 
 
 Working in progress.
+
+![nim game](https://raw.githubusercontent.com/the-wildwood-valley/nim-game/main/nim.png)

@@ -31,6 +31,8 @@ class Game:
     def __init__(self, player_left: Player, player_right: Player, referee: Referee):
         self.total_stones = -1
         self.maximum_take = -1
+        self.current_player = None
+        self.phase = "init"  # init -> guessing -> playing -> finished
 
         self.player_left = player_left
         self.player_right = player_right
@@ -40,53 +42,12 @@ class Game:
         self.player_right.enter_game(self)
         self.referee.enter_game(self)
 
-    def set_total_stones(self, total_stones):
-        self.total_stones = total_stones
-
     def run(self):
-        self.referee.introduce()
-        self.referee.init_game()
+        while not self.phase == "finished":
+            self.referee.run()
+            if self.current_player is not None:
+                self.current_player.run()
 
-        self.referee.decalre_guessing_start()
-        while True:
-            left_guess = self.player_left.guess_maximum_take()
-            print(f"左侧选手 {self.player_left.name} 猜测取子上限为 {left_guess}。")
-            if self.referee.evaluate_guess(left_guess):
-                self.referee.guess_first_result = "LEFT"
-                break
-
-            right_guess = self.player_right.guess_maximum_take()
-            print(f"右侧选手 {self.player_right.name} 猜测取子上限为 {right_guess}。")
-            if self.referee.evaluate_guess(right_guess):
-                self.referee.guess_first_result = "RIGHT"
-                break
-
-        self.referee.decalre_guessing_result()
-
-        if not self.referee.is_game_over:
-            self.referee.decalre_game_start()
-            if self.referee.guess_first_result == "LEFT":
-                first_player, second_player = self.player_left, self.player_right
-            else:
-                first_player, second_player = self.player_right, self.player_left
-
-            current_player = first_player
-
-            while not self.referee.is_game_over:
-                remaining_stones = self.referee.total_stones
-                take = current_player.take_stones(self.referee.maximum_take, remaining_stones)
-                print(f"{current_player.name} 取走了 {take} 个棋子。")
-
-                self.referee.total_stones -= take
-                self.referee.check_game_over(self.referee.total_stones)
-
-                if self.referee.is_game_over:
-                    self.referee.declare_winner("LEFT" if current_player == self.player_left else "RIGHT")
-                    break
-
-                current_player = second_player if current_player == first_player else first_player
-
-        print("游戏结束。")
 
 
 if __name__ == "__main__":

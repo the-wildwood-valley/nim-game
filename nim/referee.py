@@ -1,68 +1,62 @@
 import random
 
+from nim.participant import Participant
 
-class Referee:
+
+class Referee(Participant):
     def __init__(self):
+        super().__init__("裁判", "Jake")
         self.game = None
-        self.total_stones = random.randint(10, 30)
-        self.maximum_take = random.randint(2, 7)
-        self.is_guessing_over = False
-        self.is_game_over = False
-        self.guess_first_result = None
-        self.game_result = None
 
     def enter_game(self, game):
         self.game = game
-        self.total_stones = random.randint(10, 30)
-        self.game.set_total_stones(self.total_stones)
 
     def introduce(self):
-        print("欢迎来到 Nim 游戏！")
-        print(f"两位参赛选手，左侧是 {self.game.player_left.name}， 右侧是 {self.game.player_right.name}")
-        print(f"本次比赛共有 {self.total_stones} 个棋子。")
+        self.talk(f"欢迎参加 Nim 游戏！")
+        self.talk(f"左侧选手是 {self.game.player_left.name}，右侧选手是 {self.game.player_right.name}")
 
     def init_game(self):
-        # 初始化游戏，可能包括一些前置工作
-        print("正在初始化游戏...")
+        self.game.total_stones = random.randint(10, 30)
+        self.game.maximum_take = random.randint(2, 7)
+        self.talk(f"本次比赛共有 {self.game.total_stones} 个棋子。")
+        self.talk("下面游戏进入猜先环节。")
+        self.game.phase = "guessing"
 
-    def decalre_guessing_start(self):
-        print("猜测取子上限的环节开始！")
+    def choose_first_guesser(self):
+        self.game.current_player = random.choice([self.game.player_left, self.game.player_right])
+        self.talk(f"首先进行猜先的选手是 {self.game.current_player.name}")
 
-    def run(self):
-        # 裁判执行操作，例如宣布阶段结果
-        pass
-
-    def evaluate_guess(self, player_guess):
-        if player_guess == self.maximum_take:
-            return True
-        return False
-
-    def decalre_guessing_result(self):
-        if self.guess_first_result:
-            if self.guess_first_result == "LEFT":
-                print(f"左侧选手 {self.game.player_left.name} 猜先成功！")
-            else:
-                print(f"右侧选手 {self.game.player_right.name} 猜先成功！")
+    def evaluate_guess(self, player):
+        if player.guess == self.game.maximum_take:
+            first_player = self.game.current_player.name
+            self.talk(f"{first_player} 猜先成功！")
+            self.talk(f"下面游戏进入对战环节，由 {first_player} 先取子。")
+            self.game.phase = "playing"
         else:
-            print("无人猜中，游戏结束。")
-            self.is_game_over = True
-
-    def decalre_game_start(self):
-        if not self.is_game_over:
-            print("游戏现在开始！")
-        else:
-            print("由于猜先环节失败，游戏结束。")
+            self.switch_player()
 
     def check_game_over(self, remaining_stones):
         if remaining_stones == 0:
-            self.is_game_over = True
-
-    def declare_winner(self, winner):
-        if winner == "LEFT":
-            self.game_result = "LEFT"
-            print(f"左边的选手 {self.game.player_left.name} 获胜！")
-        elif winner == "RIGHT":
-            self.game_result = "RIGHT"
-            print(f"右边的选手 {self.game.player_right.name} 获胜！")
+            winner = self.game.current_player.name
+            self.talk(f"比赛结束，选手 {winner} 获胜！")
+            self.game.phase = "finished"
         else:
-            self.game_result = None
+            self.switch_player()
+
+    def switch_player(self):
+        if self.game.current_player == self.game.player_left:
+            self.game.current_player = self.game.player_right
+        else:
+            self.game.current_player = self.game.player_left
+
+    def run(self):
+        if self.game.phase == "init":
+            self.introduce()
+            self.init_game()
+        elif self.game.phase == "guessing":
+            if not self.game.current_player:
+                self.choose_first_guesser()
+            else:
+                self.evaluate_guess(self.game.current_player)
+        elif self.game.phase == "playing":
+            self.check_game_over(self.game.total_stones)

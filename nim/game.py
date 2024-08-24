@@ -23,52 +23,25 @@
     8. 比赛结束后，裁判宣布比赛结果，比赛双方各自复盘，总结经验。
 """
 
-import random
-import time
-import sys
-import os
-import json
-import traceback
-import logging
-import logging.config
-import argparse
-import importlib
-import inspect
-import re
-import threading
-import queue
-import time
-import copy
-import datetime
-import collections
-import functools
-import itertools
-import math
-import multiprocessing
-import random
-import socket
-import string
-import subprocess
+from nim.player import Player
+from nim.referee import Referee
 
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-
-from nim import config
-from nim import utils
-from nim import exceptions
-from nim import constants
-from nim import logger
-from nim import player
-from nim import referee
-
-__all__ = [
-    "Game",
-]
 
 class Game:
-    def __init__(self, player_left: player.Player, player_right: player.Player, referee: referee.Referee):
+    def __init__(self, player_left: Player, player_right: Player, referee: Referee):
+        self.total_stones = -1
+        self.maximum_take = -1
+
         self.player_left = player_left
         self.player_right = player_right
         self.referee = referee
+
+        self.player_left.enter_game(self)
+        self.player_right.enter_game(self)
+        self.referee.enter_game(self)
+
+    def set_total_stones(self, total_stones):
+        self.total_stones = total_stones
 
     def run(self):
         self.referee.introduce()
@@ -76,49 +49,49 @@ class Game:
 
         self.referee.decalre_guessing_start()
         while True:
-            self.player_left.run()
-            self.referee.run()
-            if self.referee.is_guessing_over:
+            left_guess = self.player_left.guess_maximum_take()
+            print(f"左侧选手 {self.player_left.name} 猜测取子上限为 {left_guess}。")
+            if self.referee.evaluate_guess(left_guess):
+                self.referee.guess_first_result = "LEFT"
                 break
-            self.player_right.run()
-            self.referee.run()
-            if self.referee.is_guessing_over:
+
+            right_guess = self.player_right.guess_maximum_take()
+            print(f"右侧选手 {self.player_right.name} 猜测取子上限为 {right_guess}。")
+            if self.referee.evaluate_guess(right_guess):
+                self.referee.guess_first_result = "RIGHT"
                 break
+
         self.referee.decalre_guessing_result()
 
-        self.referee.decalre_game_start()
-        if self.referee.guess_first_result == constants.GuessFirstResult.LEFT:
-            self.player_left.guess_first = True
-            self.player_right.guess_first = False
-        elif self.referee.guess_first_result == constants.GuessFirstResult.RIGHT:
-            self.player_left.guess_first = False
-            self.player_right.guess_first = True
-        else:
-            self.player_left.guess_first = False
-            self.player_right.guess_first = False
-            self.referee.is_game_over = True
+        if not self.referee.is_game_over:
+            self.referee.decalre_game_start()
+            if self.referee.guess_first_result == "LEFT":
+                first_player, second_player = self.player_left, self.player_right
+            else:
+                first_player, second_player = self.player_right, self.player_left
 
-        while not self.referee.is_game_over:
-            self.player_left.run()
-            self.referee.run()
-            if self.referee.is_game_over:
-                break
-            self.player_right.run()
-            self.referee.run()
-            if self.referee.is_game_over:
-                break
-        self.referee.decalre_game_start()
+            current_player = first_player
 
-        if self.referee.game_result == constants.GameResult.LEFT:
-            self.player_left.win = True
-            self.player_right.win = False
-        elif self.referee.game_result == constants.GameResult.RIGHT:
-            self.player_left.win = False
-            self.player_right.win = True
-        else:
-            self.player_left.win = False
-            self.player_right.win = False
+            while not self.referee.is_game_over:
+                remaining_stones = self.referee.total_stones
+                take = current_player.take_stones(self.referee.maximum_take, remaining_stones)
+                print(f"{current_player.name} 取走了 {take} 个棋子。")
 
-        self.player_left.run()
-        self.player_right.run()
-        self.referee.decalre_game_start()
+                self.referee.total_stones -= take
+                self.referee.check_game_over(self.referee.total_stones)
+
+                if self.referee.is_game_over:
+                    self.referee.declare_winner("LEFT" if current_player == self.player_left else "RIGHT")
+                    break
+
+                current_player = second_player if current_player == first_player else first_player
+
+        print("游戏结束。")
+
+
+if __name__ == "__main__":
+    player_left = Player("Alice")
+    player_right = Player("Bob")
+    referee = Referee()
+    game = Game(player_left, player_right, referee)
+    game.run()

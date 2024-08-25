@@ -19,9 +19,12 @@
     取到最后棋子的选手获胜。比赛期间，裁判不得干预比赛过程，棋手如果违反规则，裁判将判负。
 """
 
+import time
+
 from nim.player import Player
 from nim.players.alice import Alice
 from nim.players.bob import Bob
+from nim.players.carole import Carole
 from nim.players.randy import Randy
 from nim.referee import Referee
 
@@ -58,6 +61,7 @@ class Game:
 
     def run(self):
         while not self.phase == "finished":
+            time.sleep(1)
             self.referee.run()
             if self.current_player is not None:
                 self.current_player.run()
@@ -65,10 +69,13 @@ class Game:
 
 if __name__ == "__main__":
     import random
-    players = [Randy(), Alice(), Bob()]
-    random.shuffle(players)
-    player_left = players[0]
-    player_right = players[1]
-    referee = Referee()
-    game = Game(player_left, player_right, referee)
-    game.run()
+    for i in range(10):
+        players = [Randy(), Alice(), Bob(), Carole()]
+        random.shuffle(players)
+        player_left = players[0]
+        player_right = players[1]
+        referee = Referee()
+        game = Game(player_left, player_right, referee)
+        game.run()
+        player_left.learn()
+        player_right.learn()

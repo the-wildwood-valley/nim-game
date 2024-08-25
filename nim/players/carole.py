@@ -1,5 +1,5 @@
 """
-我是 Bob，一个有快速学习能力的 Nim 选手。我知道这个比赛的精髓在于，要在猜先阶段尽可能获得先手地位，而在比赛阶段要尽可能获得优势地位。
+我是 Carole，一个有快速学习能力的 Nim 选手。我知道这个比赛的精髓在于，要在猜先阶段尽可能获得先手地位，而在比赛阶段要尽可能获得优势地位。
 
 我有若干的经验总结于下：
 
@@ -25,9 +25,9 @@ def extract_last_paragraph(text):
     return text.split('\n\n')[-1]
 
 
-class Bob(Player):
+class Carole(Player):
     def __init__(self):
-        super().__init__('Bob')
+        super().__init__('Carole')
         self.strategy = __doc__
 
     def guess_maximum_take(self):

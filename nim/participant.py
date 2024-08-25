@@ -44,8 +44,8 @@ class Participant:
         content = f"给定了如下的情况—\n\n{context}\n\n我问一下自己—{question}"
         self.think(content)
 
-    def answer(self):
-        prompt = "我在脑海中分析并在最后一行明确给出这个数量作为最终答案……"
+    def answer(self, position="最后一行", target="数量"):
+        prompt = f"我在脑海中分析并在{position}明确给出{target}作为最终答案……"
 
         messages = []
         for event in self.history:
@@ -58,7 +58,7 @@ class Participant:
         messages.append({"role": 'user', "content": prompt})
 
         completion = client.chat.completions.create(
-            model="moonshot-v1-32k",
+            model="moonshot-v1-128k",
             messages=messages,
             temperature=0.3,
         )

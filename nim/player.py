@@ -15,6 +15,9 @@ class Player(Participant):
     def take_stones(self, maximum_take, remaining_stones):
         raise NotImplementedError
 
+    def learn(self):
+        pass
+
     def run(self):
         if self.game.phase == "guessing":
             self.guess_maximum_take()

@@ -45,7 +45,7 @@ class Participant:
         self.think(content)
 
     def answer(self):
-        prompt = "我在脑海中回答到……"
+        prompt = "我在脑海中分析并在最后一行明确给出这个数量作为最终答案……"
 
         messages = []
         for event in self.history:
@@ -63,6 +63,9 @@ class Participant:
             temperature=0.3,
         )
         complete_message = f"{prompt}{completion.choices[0].message.content}"
+        print('--------------------------------------')
+        print(complete_message)
+        print('--------------------------------------')
 
         return complete_message
 

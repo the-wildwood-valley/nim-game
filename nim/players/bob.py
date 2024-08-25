@@ -12,9 +12,9 @@ def extract_last_number(text):
         return None
 
 
-class Alice(Player):
+class Bob(Player):
     def __init__(self):
-        super().__init__('Alice')
+        super().__init__('Bob')
 
     def guess_maximum_take(self):
         context = ''

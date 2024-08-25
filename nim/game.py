@@ -11,7 +11,7 @@
 
 比赛规则：
     1. 裁判和左侧选手和右侧选手三人入场，裁判告知选手双方的身份。
-    2. 裁判随机决定棋盘上棋子的总数，总数小于三十；随机给出每次取子的数量上限，该上限介于二与七之间，包括二与七本身。裁判并不公布这两个数量。
+    2. 裁判随机决定棋盘上棋子的总数，总数小于30；随机给出每次取子的数量上限，该上限介于2与7之间，包括2与7本身。裁判并不公布这两个数量。
     3. 裁判宣布猜先开始，给出猜先规则，从随机选择的一方开始，请选手轮流猜先。选手需要猜测取子上限，裁判判断是否猜对，首先猜对的一方获得先行权利。
     若无人猜中，则比赛双方都记为猜先失败。裁判宣布猜先结果。猜先失败则比赛终止。
     4. 裁判将给定数量的棋子置于盘面，并宣布每次取子的数量的上限，宣布比赛开始。
@@ -21,6 +21,7 @@
 
 from nim.player import Player
 from nim.players.alice import Alice
+from nim.players.bob import Bob
 from nim.players.randy import Randy
 from nim.referee import Referee
 
@@ -63,8 +64,11 @@ class Game:
 
 
 if __name__ == "__main__":
-    player_left = Randy()
-    player_right = Alice()
+    import random
+    players = [Randy(), Alice(), Bob()]
+    random.shuffle(players)
+    player_left = players[0]
+    player_right = players[1]
     referee = Referee()
     game = Game(player_left, player_right, referee)
     game.run()

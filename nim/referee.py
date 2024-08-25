@@ -42,9 +42,17 @@ class Referee(Participant):
 
     def check_game_over(self, took, remaining_stones):
         if remaining_stones == 0:
-            winner = self.game.current_player.name
-            self.talk(f"比赛结束，选手 {winner} 获胜！")
-            self.game.phase = "finished"
+            if took > self.game.maximum_take:
+                loser = self.game.current_player.name
+                self.talk(f"选手 {loser} 违规，取走的棋子数量不能不能多于比赛规定的上限！")
+                self.switch_player()
+                winner = self.game.current_player.name
+                self.talk(f"比赛结束，选手 {winner} 获胜！")
+                self.game.phase = "finished"
+            else:
+                winner = self.game.current_player.name
+                self.talk(f"比赛结束，选手 {winner} 获胜！")
+                self.game.phase = "finished"
         else:
             if remaining_stones < 0:
                 loser = self.game.current_player.name

@@ -11,26 +11,18 @@ from nim.player import Player
 from nim.util import extract_last_number, extract_last_paragraph
 
 
-class Carole(Player):
+class David(Player):
     def __init__(self):
-        super().__init__('Carole')
+        super().__init__('David')
         self.strategy = __doc__
 
     def guess_maximum_take(self):
         context = ''
         for entry in self.game.history:
             context += f'{entry["role"]}：{entry["content"]}\n'
-
-        question = '我分析目前棋面上的关键因素是什么？'
-        self.ask(context, question)
-        self.think(self.strategy)
-        answer = self.answer('最后一段', '结论')
-        conculsion = extract_last_paragraph(answer)
-
         question = '我应该猜测取子上限为多少？'
         self.ask(context, question)
         self.think(self.strategy)
-        self.think(f'棋面上的关键因素：{conculsion}')
         answer = self.answer()
         self.guess = int(extract_last_number(answer))
 
@@ -38,17 +30,9 @@ class Carole(Player):
         context = ''
         for entry in self.game.history:
             context += f'{entry["role"]}：{entry["content"]}\n'
-
-        question = '我分析目前棋面上的关键因素是什么？'
-        self.ask(context, question)
-        self.think(self.strategy)
-        answer = self.answer('最后一段', '结论')
-        conculsion = extract_last_paragraph(answer)
-
         question = '我应该从棋面上取几个棋子？'
         self.ask(context, question)
         self.think(self.strategy)
-        self.think(f'棋面上的关键因素：{conculsion}')
         answer = self.answer()
         self.took = int(extract_last_number(answer))
 
@@ -63,7 +47,7 @@ class Carole(Player):
         conculsion = extract_last_paragraph(answer)
 
         context = f'{context}\n\n{question}\n\n{conculsion}'
-        question = '我调整后的策略应该是什么？注意策略是长期有效的，而不是针对某一局的，调整时需要仔细斟酌。'
+        question = '我调整后的策略应该是什么？'
         self.ask(context, question)
         answer = self.answer('本文', '策略全文')
         self.strategy = '\n\n'.join(answer.split('\n\n')[1:])

@@ -25,6 +25,7 @@ from nim.player import Player
 from nim.players.alice import Alice
 from nim.players.bob import Bob
 from nim.players.carole import Carole
+from nim.players.david import David
 from nim.players.randy import Randy
 from nim.referee import Referee
 
@@ -69,8 +70,8 @@ class Game:
 
 if __name__ == "__main__":
     import random
-    for i in range(10):
-        players = [Randy(), Alice(), Bob(), Carole()]
+    for i in range(20):
+        players = [Randy(), Alice(), Bob(), Carole(), David()]
         random.shuffle(players)
         player_left = players[0]
         player_right = players[1]

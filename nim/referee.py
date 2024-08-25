@@ -68,6 +68,13 @@ class Referee(Participant):
                 winner = self.game.current_player.name
                 self.talk(f"比赛结束，选手 {winner} 获胜！")
                 self.game.phase = "finished"
+            elif took < 1:
+                loser = self.game.current_player.name
+                self.talk(f"选手 {loser} 违规，取走的棋子数量不能不能少于比赛规定的下限 1！")
+                self.switch_player()
+                winner = self.game.current_player.name
+                self.talk(f"比赛结束，选手 {winner} 获胜！")
+                self.game.phase = "finished"
             else:
                 self.switch_player()
 

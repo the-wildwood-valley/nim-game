@@ -10,15 +10,17 @@ class Referee(Participant):
 
     def enter_game(self, game):
         self.game = game
+        self.game.enter_game(self)
 
     def introduce(self):
-        self.talk(f"欢迎参加 Nim 游戏！")
+        self.talk("欢迎参加 Nim 游戏！")
         self.talk(f"左侧选手是 {self.game.player_left.name}，右侧选手是 {self.game.player_right.name}")
+        self.talk("下面宣布游戏规则。")
+        self.talk(self.game.rules)
 
     def init_game(self):
         self.game.total_stones = random.randint(10, 30)
         self.game.maximum_take = random.randint(2, 7)
-        self.talk(f"本次比赛共有 {self.game.total_stones} 个棋子。")
         self.talk("下面游戏进入猜先环节。")
         self.game.phase = "guessing"
 
@@ -30,18 +32,36 @@ class Referee(Participant):
         if player.guess == self.game.maximum_take:
             first_player = self.game.current_player.name
             self.talk(f"{first_player} 猜先成功！")
-            self.talk(f"下面游戏进入对战环节，由 {first_player} 先取子。")
+            self.talk(f"下面游戏进入对战环节。")
+            self.talk(f"本次比赛共有 {self.game.total_stones} 个棋子。")
+            self.talk(f"每一轮次每个选手最多取走 {self.game.maximum_take} 个棋子。棋手如果取走的数量超过这个限额则判输。")
+            self.talk(f"由 {first_player} 先取子。")
             self.game.phase = "playing"
         else:
             self.switch_player()
 
-    def check_game_over(self, remaining_stones):
+    def check_game_over(self, took, remaining_stones):
         if remaining_stones == 0:
             winner = self.game.current_player.name
             self.talk(f"比赛结束，选手 {winner} 获胜！")
             self.game.phase = "finished"
         else:
-            self.switch_player()
+            if remaining_stones < 0:
+                loser = self.game.current_player.name
+                self.talk(f"选手 {loser} 违规，取走的棋子数量不能不能多于棋面数量！")
+                self.switch_player()
+                winner = self.game.current_player.name
+                self.talk(f"比赛结束，选手 {winner} 获胜！")
+                self.game.phase = "finished"
+            elif took > self.game.maximum_take:
+                loser = self.game.current_player.name
+                self.talk(f"选手 {loser} 违规，取走的棋子数量不能不能多于比赛规定的上限！")
+                self.switch_player()
+                winner = self.game.current_player.name
+                self.talk(f"比赛结束，选手 {winner} 获胜！")
+                self.game.phase = "finished"
+            else:
+                self.switch_player()
 
     def switch_player(self):
         if self.game.current_player == self.game.player_left:
@@ -59,4 +79,4 @@ class Referee(Participant):
             else:
                 self.evaluate_guess(self.game.current_player)
         elif self.game.phase == "playing":
-            self.check_game_over(self.game.total_stones)
+            self.check_game_over(self.game.last_took, self.game.total_stones)

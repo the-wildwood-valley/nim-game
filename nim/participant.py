@@ -19,6 +19,9 @@ class Participant:
         self.game = game
         self.game.enter_game(self)
 
+    def clear_history(self):
+        self.history = []
+
     def act(self, action, content, scope="public"):
         role = f"{self.role} {self.name}"
         content = f"{action}：{content}"

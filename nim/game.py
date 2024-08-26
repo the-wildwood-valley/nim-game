@@ -82,3 +82,5 @@ if __name__ == "__main__":
         game.run()
         player_left.learn()
         player_right.learn()
+        player_left.clear_history()
+        player_right.clear_history()

@@ -70,12 +70,14 @@ class Game:
 
 if __name__ == "__main__":
     import random
+
+    referee = Referee()
+    players = [Randy(), Alice(), Bob(), Carole(), David()]
+
     for i in range(20):
-        players = [Randy(), Alice(), Bob(), Carole(), David()]
         random.shuffle(players)
         player_left = players[0]
         player_right = players[1]
-        referee = Referee()
         game = Game(player_left, player_right, referee)
         game.run()
         player_left.learn()

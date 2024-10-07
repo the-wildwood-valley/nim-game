@@ -20,7 +20,7 @@ class Bob(Player):
         context = ''
         for entry in self.game.history:
             context += f'{entry["role"]}：{entry["content"]}\n'
-        question = '我应该猜测取子上限为多少？'
+        question = '我应该猜测取子上限的数字为多少？'
         self.ask(context, question)
         self.think(self.strategy)
         answer = self.answer()

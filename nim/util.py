@@ -7,7 +7,7 @@ def extract_last_number(text):
     if matches:
         return matches[-1]  # 返回最后一个匹配的数字段
     else:
-        return None
+        return '0'
 
 
 def extract_last_paragraph(text):

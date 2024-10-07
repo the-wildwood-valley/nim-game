@@ -27,7 +27,7 @@ class Carole(Player):
         answer = self.answer('最后一段', '结论')
         conculsion = extract_last_paragraph(answer)
 
-        question = '我应该猜测取子上限为多少？'
+        question = '我应该猜测取子上限的数字为多少？'
         self.ask(context, question)
         self.think(self.strategy)
         self.think(f'棋面上的关键因素：{conculsion}')

@@ -1,7 +1,5 @@
 # Nim-Game: Explore the self-improvement of prompts and strategies in the game of Nim.
 
-# Welcome to the Nim Game!
-
 ## Overview
 - The game begins with a certain number of pieces on the board. Two players take turns removing pieces, with a limit on how many pieces can be taken in a single turn. The player who removes the last piece from the board wins the game.
 

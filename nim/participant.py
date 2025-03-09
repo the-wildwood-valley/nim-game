@@ -4,7 +4,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key=os.getenv("API_KEY"),
-    base_url="https://api.moonshot.cn/v1",
+    base_url="https://api.deepseek.com",
 )
 
 
@@ -61,8 +61,8 @@ class Participant:
         messages.append({"role": 'user', "content": prompt})
 
         completion = client.chat.completions.create(
-            model="moonshot-v1-128k",
-            messages=messages,
+            model="deepseek-reasoner",
+            messages=merge_consecutive_messages(messages),
             temperature=0.3,
         )
         complete_message = f"{prompt}{completion.choices[0].message.content}"
@@ -73,4 +73,29 @@ class Participant:
         return complete_message
 
 
+def merge_consecutive_messages(messages, target_role="user", separator="\n"):
+    if not messages:
+        return []
+
+    merged = []
+    current_msg = None  # Tracks the message being built
+
+    for msg in messages:
+        role = msg["role"]
+        content = msg["content"].strip()
+
+        # Merge if same target role and consecutive
+        if role == target_role and current_msg and current_msg["role"] == role:
+            current_msg["content"] += f"{separator}{content}"
+        # Start new message group
+        else:
+            if current_msg:
+                merged.append(current_msg)
+            current_msg = {"role": role, "content": content}
+
+    # Add the last accumulated message
+    if current_msg:
+        merged.append(current_msg)
+
+    return merged
 
